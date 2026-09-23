@@ -41,6 +41,8 @@
           "semanticObject": "komatsufleet",
           "action": "display",
           "title": "{{komatsufleet-display.flpTitle}}",
+          "subTitle": "{{komatsufleet-display.flpSubtitle}}",
+          "icon": "sap-icon://shipping-status",
           "signature": {
             "parameters": {},
             "additionalParameters": "allowed"

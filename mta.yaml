@@ -19,7 +19,7 @@ modules:
         name: komatsufleet-auth-key
   parameters:
     content:
-      instance:
+      subaccount:
         destinations:
         - Name: komatsufleet_html_repo_host
           ServiceInstanceName: komatsufleet-html5-service
