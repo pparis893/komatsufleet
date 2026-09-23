@@ -1,0 +1,1048 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+    <edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Capabilities.V1.xml">
+        <edmx:Include Alias="Capabilities" Namespace="Org.OData.Capabilities.V1"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/Common.xml">
+        <edmx:Include Alias="Common" Namespace="com.sap.vocabularies.Common.v1"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Core.V1.xml">
+        <edmx:Include Alias="Core" Namespace="Org.OData.Core.V1"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Measures.V1.xml">
+        <edmx:Include Alias="Measures" Namespace="Org.OData.Measures.V1"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/UI.xml">
+        <edmx:Include Alias="UI" Namespace="com.sap.vocabularies.UI.v1"/>
+    </edmx:Reference>
+    <edmx:DataServices>
+        <Schema Namespace="FleetService" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+            <Annotation Term="Core.Links">
+                <Collection>
+                    <Record>
+                        <PropertyValue Property="rel" String="author"/>
+                        <PropertyValue Property="href" String="https://cap.cloud.sap"/>
+                    </Record>
+                </Collection>
+            </Annotation>
+            <EntityContainer Name="EntityContainer">
+                <EntitySet Name="Equipments" EntityType="FleetService.Equipments">
+                    <NavigationPropertyBinding Path="category" Target="Categories"/>
+                    <NavigationPropertyBinding Path="status" Target="Statuses"/>
+                    <NavigationPropertyBinding Path="currency" Target="Currencies"/>
+                    <NavigationPropertyBinding Path="maintenanceLogs" Target="MaintenanceLogs"/>
+                    <NavigationPropertyBinding Path="SiblingEntity" Target="Equipments"/>
+                </EntitySet>
+                <EntitySet Name="MaintenanceLogs" EntityType="FleetService.MaintenanceLogs">
+                    <NavigationPropertyBinding Path="equipment" Target="Equipments"/>
+                    <NavigationPropertyBinding Path="currency" Target="Currencies"/>
+                    <NavigationPropertyBinding Path="SiblingEntity" Target="MaintenanceLogs"/>
+                </EntitySet>
+                <EntitySet Name="Categories" EntityType="FleetService.Categories"/>
+                <EntitySet Name="Statuses" EntityType="FleetService.Statuses"/>
+                <EntitySet Name="Currencies" EntityType="FleetService.Currencies">
+                    <NavigationPropertyBinding Path="texts" Target="Currencies_texts"/>
+                    <NavigationPropertyBinding Path="localized" Target="Currencies_texts"/>
+                </EntitySet>
+                <EntitySet Name="Currencies_texts" EntityType="FleetService.Currencies_texts"/>
+            </EntityContainer>
+            <EntityType Name="Equipments">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                    <PropertyRef Name="IsActiveEntity"/>
+                </Key>
+                <Property Name="ID" Type="Edm.Guid" Nullable="false"/>
+                <Property Name="createdAt" Type="Edm.DateTimeOffset" Precision="7"/>
+                <Property Name="createdBy" Type="Edm.String" MaxLength="255"/>
+                <Property Name="modifiedAt" Type="Edm.DateTimeOffset" Precision="7"/>
+                <Property Name="modifiedBy" Type="Edm.String" MaxLength="255"/>
+                <Property Name="code" Type="Edm.String" MaxLength="20"/>
+                <Property Name="name" Type="Edm.String" MaxLength="100"/>
+                <Property Name="model" Type="Edm.String" MaxLength="50"/>
+                <Property Name="serialNumber" Type="Edm.String" MaxLength="50"/>
+                <NavigationProperty Name="category" Type="FleetService.Categories">
+                    <ReferentialConstraint Property="category_code" ReferencedProperty="code"/>
+                </NavigationProperty>
+                <Property Name="category_code" Type="Edm.String" MaxLength="20"/>
+                <NavigationProperty Name="status" Type="FleetService.Statuses">
+                    <ReferentialConstraint Property="status_code" ReferencedProperty="code"/>
+                </NavigationProperty>
+                <Property Name="status_code" Type="Edm.String" MaxLength="20"/>
+                <Property Name="healthScore" Type="Edm.Int32"/>
+                <Property Name="operatingHours" Type="Edm.Int32"/>
+                <Property Name="location" Type="Edm.String" MaxLength="100"/>
+                <Property Name="supervisorName" Type="Edm.String" MaxLength="100"/>
+                <Property Name="supervisorEmail" Type="Edm.String" MaxLength="100"/>
+                <Property Name="supervisorPhone" Type="Edm.String" MaxLength="50"/>
+                <Property Name="dailyRate" Type="Edm.Decimal" Precision="10" Scale="2"/>
+                <NavigationProperty Name="currency" Type="FleetService.Currencies">
+                    <ReferentialConstraint Property="currency_code" ReferencedProperty="code"/>
+                </NavigationProperty>
+                <Property Name="currency_code" Type="Edm.String" MaxLength="3"/>
+                <Property Name="manufactureYear" Type="Edm.Int32"/>
+                <Property Name="lastServiceDate" Type="Edm.Date"/>
+                <Property Name="nextServiceDate" Type="Edm.Date"/>
+                <Property Name="imageUrl" Type="Edm.String" MaxLength="255"/>
+                <NavigationProperty Name="maintenanceLogs" Type="Collection(FleetService.MaintenanceLogs)" Partner="equipment">
+                    <OnDelete Action="Cascade"/>
+                </NavigationProperty>
+                <Property Name="IsActiveEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="true"/>
+                <Property Name="HasActiveEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="false"/>
+                <Property Name="HasDraftEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="false"/>
+                <NavigationProperty Name="DraftAdministrativeData" Type="FleetService.DraftAdministrativeData" ContainsTarget="true"/>
+                <NavigationProperty Name="SiblingEntity" Type="FleetService.Equipments"/>
+                <Property Name="DraftMessages" Type="Collection(FleetService.DRAFT_DraftAdministrativeData_DraftMessage)" Nullable="true"/>
+            </EntityType>
+            <EntityType Name="MaintenanceLogs">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                    <PropertyRef Name="IsActiveEntity"/>
+                </Key>
+                <Property Name="ID" Type="Edm.Guid" Nullable="false"/>
+                <Property Name="createdAt" Type="Edm.DateTimeOffset" Precision="7"/>
+                <Property Name="createdBy" Type="Edm.String" MaxLength="255"/>
+                <Property Name="modifiedAt" Type="Edm.DateTimeOffset" Precision="7"/>
+                <Property Name="modifiedBy" Type="Edm.String" MaxLength="255"/>
+                <NavigationProperty Name="equipment" Type="FleetService.Equipments" Partner="maintenanceLogs">
+                    <ReferentialConstraint Property="equipment_ID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <Property Name="equipment_ID" Type="Edm.Guid"/>
+                <Property Name="logNumber" Type="Edm.String" MaxLength="20"/>
+                <Property Name="serviceDate" Type="Edm.Date"/>
+                <Property Name="maintenanceType" Type="Edm.String" MaxLength="40"/>
+                <Property Name="technician" Type="Edm.String" MaxLength="100"/>
+                <Property Name="hoursSpent" Type="Edm.Decimal" Precision="5" Scale="2"/>
+                <Property Name="cost" Type="Edm.Decimal" Precision="10" Scale="2"/>
+                <NavigationProperty Name="currency" Type="FleetService.Currencies">
+                    <ReferentialConstraint Property="currency_code" ReferencedProperty="code"/>
+                </NavigationProperty>
+                <Property Name="currency_code" Type="Edm.String" MaxLength="3"/>
+                <Property Name="status" Type="Edm.String" MaxLength="30"/>
+                <Property Name="criticality" Type="Edm.Int32"/>
+                <Property Name="remarks" Type="Edm.String"/>
+                <Property Name="IsActiveEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="true"/>
+                <Property Name="HasActiveEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="false"/>
+                <Property Name="HasDraftEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="false"/>
+                <NavigationProperty Name="DraftAdministrativeData" Type="FleetService.DraftAdministrativeData" ContainsTarget="true"/>
+                <NavigationProperty Name="SiblingEntity" Type="FleetService.MaintenanceLogs"/>
+                <Property Name="DraftMessages" Type="Collection(FleetService.DRAFT_DraftAdministrativeData_DraftMessage)" Nullable="true"/>
+            </EntityType>
+            <EntityType Name="Categories">
+                <Key>
+                    <PropertyRef Name="code"/>
+                </Key>
+                <Property Name="code" Type="Edm.String" MaxLength="20" Nullable="false"/>
+                <Property Name="name" Type="Edm.String" MaxLength="60"/>
+                <Property Name="description" Type="Edm.String" MaxLength="200"/>
+            </EntityType>
+            <EntityType Name="Statuses">
+                <Key>
+                    <PropertyRef Name="code"/>
+                </Key>
+                <Property Name="code" Type="Edm.String" MaxLength="20" Nullable="false"/>
+                <Property Name="name" Type="Edm.String" MaxLength="60"/>
+                <Property Name="criticality" Type="Edm.Int32"/>
+            </EntityType>
+            <EntityType Name="Currencies">
+                <Key>
+                    <PropertyRef Name="code"/>
+                </Key>
+                <Property Name="name" Type="Edm.String" MaxLength="255"/>
+                <Property Name="descr" Type="Edm.String" MaxLength="1000"/>
+                <Property Name="code" Type="Edm.String" MaxLength="3" Nullable="false"/>
+                <Property Name="symbol" Type="Edm.String" MaxLength="5"/>
+                <Property Name="minorUnit" Type="Edm.Int16"/>
+                <NavigationProperty Name="texts" Type="Collection(FleetService.Currencies_texts)">
+                    <OnDelete Action="Cascade"/>
+                </NavigationProperty>
+                <NavigationProperty Name="localized" Type="FleetService.Currencies_texts">
+                    <ReferentialConstraint Property="code" ReferencedProperty="code"/>
+                </NavigationProperty>
+            </EntityType>
+            <EntityType Name="DraftAdministrativeData">
+                <Key>
+                    <PropertyRef Name="DraftUUID"/>
+                </Key>
+                <Property Name="DraftUUID" Type="Edm.Guid" Nullable="false"/>
+                <Property Name="CreationDateTime" Type="Edm.DateTimeOffset" Precision="7"/>
+                <Property Name="CreatedByUser" Type="Edm.String" MaxLength="256"/>
+                <Property Name="DraftIsCreatedByMe" Type="Edm.Boolean"/>
+                <Property Name="LastChangeDateTime" Type="Edm.DateTimeOffset" Precision="7"/>
+                <Property Name="LastChangedByUser" Type="Edm.String" MaxLength="256"/>
+                <Property Name="InProcessByUser" Type="Edm.String" MaxLength="256"/>
+                <Property Name="DraftIsProcessedByMe" Type="Edm.Boolean"/>
+            </EntityType>
+            <EntityType Name="Currencies_texts">
+                <Key>
+                    <PropertyRef Name="locale"/>
+                    <PropertyRef Name="code"/>
+                </Key>
+                <Property Name="locale" Type="Edm.String" MaxLength="14" Nullable="false"/>
+                <Property Name="name" Type="Edm.String" MaxLength="255"/>
+                <Property Name="descr" Type="Edm.String" MaxLength="1000"/>
+                <Property Name="code" Type="Edm.String" MaxLength="3" Nullable="false"/>
+            </EntityType>
+            <ComplexType Name="DRAFT_DraftAdministrativeData_DraftMessage">
+                <Property Name="code" Type="Edm.String"/>
+                <Property Name="message" Type="Edm.String"/>
+                <Property Name="target" Type="Edm.String"/>
+                <Property Name="additionalTargets" Type="Collection(Edm.String)" Nullable="true"/>
+                <Property Name="transition" Type="Edm.Boolean"/>
+                <Property Name="numericSeverity" Type="Edm.Byte"/>
+                <Property Name="longtextUrl" Type="Edm.String"/>
+            </ComplexType>
+            <Action Name="draftPrepare" IsBound="true" EntitySetPath="in">
+                <Parameter Name="in" Type="FleetService.Equipments"/>
+                <Parameter Name="SideEffectsQualifier" Type="Edm.String"/>
+                <ReturnType Type="FleetService.Equipments"/>
+            </Action>
+            <Action Name="draftPrepare" IsBound="true" EntitySetPath="in">
+                <Parameter Name="in" Type="FleetService.MaintenanceLogs"/>
+                <Parameter Name="SideEffectsQualifier" Type="Edm.String"/>
+                <ReturnType Type="FleetService.MaintenanceLogs"/>
+            </Action>
+            <Action Name="draftActivate" IsBound="true" EntitySetPath="in">
+                <Parameter Name="in" Type="FleetService.Equipments"/>
+                <ReturnType Type="FleetService.Equipments"/>
+            </Action>
+            <Action Name="draftEdit" IsBound="true" EntitySetPath="in">
+                <Parameter Name="in" Type="FleetService.Equipments"/>
+                <Parameter Name="PreserveChanges" Type="Edm.Boolean"/>
+                <ReturnType Type="FleetService.Equipments"/>
+            </Action>
+            <Annotations Target="FleetService.EntityContainer">
+                <Annotation Term="Common.AddressViaNavigationPath" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FleetService.Equipments">
+                <Annotation Term="UI.HeaderInfo">
+                    <Record Type="UI.HeaderInfoType">
+                        <PropertyValue Property="TypeName" String="Equipo Komatsu"/>
+                        <PropertyValue Property="TypeNamePlural" String="Flota de Equipos Komatsu"/>
+                        <PropertyValue Property="Title">
+                            <Record Type="UI.DataField">
+                                <PropertyValue Property="Value" Path="name"/>
+                            </Record>
+                        </PropertyValue>
+                        <PropertyValue Property="Description">
+                            <Record Type="UI.DataField">
+                                <PropertyValue Property="Value" Path="model"/>
+                            </Record>
+                        </PropertyValue>
+                        <PropertyValue Property="ImageUrl" Path="imageUrl"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.SelectionFields">
+                    <Collection>
+                        <PropertyPath>category_code</PropertyPath>
+                        <PropertyPath>status_code</PropertyPath>
+                        <PropertyPath>location</PropertyPath>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.LineItem">
+                    <Collection>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="code"/>
+                            <PropertyValue Property="Label" String="Código"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="name"/>
+                            <PropertyValue Property="Label" String="Nombre de Equipo"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="category_code"/>
+                            <PropertyValue Property="Label" String="Categoría"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="status_code"/>
+                            <PropertyValue Property="Label" String="Estado Operativo"/>
+                            <PropertyValue Property="Criticality" Path="status/criticality"/>
+                            <PropertyValue Property="CriticalityRepresentation" EnumMember="UI.CriticalityRepresentationType/WithoutIcon"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="healthScore"/>
+                            <PropertyValue Property="Label" String="Salud (%)"/>
+                            <PropertyValue Property="Criticality" Path="status/criticality"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="operatingHours"/>
+                            <PropertyValue Property="Label" String="Horas Operación"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="dailyRate"/>
+                            <PropertyValue Property="Label" String="Tarifa Diaria"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="location"/>
+                            <PropertyValue Property="Label" String="Ubicación / Faena"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.HeaderFacets">
+                    <Collection>
+                        <Record Type="UI.ReferenceFacet">
+                            <PropertyValue Property="Target" AnnotationPath="@UI.DataPoint#StatusHeader"/>
+                        </Record>
+                        <Record Type="UI.ReferenceFacet">
+                            <PropertyValue Property="Target" AnnotationPath="@UI.DataPoint#OperatingHoursHeader"/>
+                        </Record>
+                        <Record Type="UI.ReferenceFacet">
+                            <PropertyValue Property="Target" AnnotationPath="@UI.DataPoint#HealthScoreHeader"/>
+                        </Record>
+                        <Record Type="UI.ReferenceFacet">
+                            <PropertyValue Property="Target" AnnotationPath="@UI.DataPoint#DailyRateHeader"/>
+                        </Record>
+                        <Record Type="UI.ReferenceFacet">
+                            <PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#SupervisorHeader"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.DataPoint" Qualifier="StatusHeader">
+                    <Record Type="UI.DataPointType">
+                        <PropertyValue Property="Value" Path="status_code"/>
+                        <PropertyValue Property="Title" String="Estado Actual"/>
+                        <PropertyValue Property="Criticality" Path="status/criticality"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.DataPoint" Qualifier="OperatingHoursHeader">
+                    <Record Type="UI.DataPointType">
+                        <PropertyValue Property="Value" Path="operatingHours"/>
+                        <PropertyValue Property="Title" String="Horas Acumuladas"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.DataPoint" Qualifier="HealthScoreHeader">
+                    <Record Type="UI.DataPointType">
+                        <PropertyValue Property="Value" Path="healthScore"/>
+                        <PropertyValue Property="Title" String="Índice de Salud"/>
+                        <PropertyValue Property="Criticality" Path="status/criticality"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.DataPoint" Qualifier="DailyRateHeader">
+                    <Record Type="UI.DataPointType">
+                        <PropertyValue Property="Value" Path="dailyRate"/>
+                        <PropertyValue Property="Title" String="Tarifa / Día"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.FieldGroup" Qualifier="SupervisorHeader">
+                    <Record Type="UI.FieldGroupType">
+                        <PropertyValue Property="Data">
+                            <Collection>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="supervisorName"/>
+                                    <PropertyValue Property="Label" String="Supervisor Responsable"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="supervisorEmail"/>
+                                    <PropertyValue Property="Label" String="Email"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="supervisorPhone"/>
+                                    <PropertyValue Property="Label" String="Teléfono"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.Facets">
+                    <Collection>
+                        <Record Type="UI.CollectionFacet">
+                            <PropertyValue Property="ID" String="GeneralSection"/>
+                            <PropertyValue Property="Label" String="Información del Equipo"/>
+                            <PropertyValue Property="Facets">
+                                <Collection>
+                                    <Record Type="UI.ReferenceFacet">
+                                        <PropertyValue Property="Label" String="Ficha Técnica"/>
+                                        <PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#TechnicalData"/>
+                                    </Record>
+                                    <Record Type="UI.ReferenceFacet">
+                                        <PropertyValue Property="Label" String="Operación y Faena"/>
+                                        <PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#OperationData"/>
+                                    </Record>
+                                </Collection>
+                            </PropertyValue>
+                        </Record>
+                        <Record Type="UI.ReferenceFacet">
+                            <PropertyValue Property="ID" String="MaintenanceSection"/>
+                            <PropertyValue Property="Label" String="Historial y Órdenes de Mantenimiento"/>
+                            <PropertyValue Property="Target" AnnotationPath="maintenanceLogs/@UI.LineItem"/>
+                        </Record>
+                        <Record Type="UI.ReferenceFacet">
+                            <PropertyValue Property="ID" String="AuditSection"/>
+                            <PropertyValue Property="Label" String="Auditoría del Sistema"/>
+                            <PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#AuditData"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.FieldGroup" Qualifier="TechnicalData">
+                    <Record Type="UI.FieldGroupType">
+                        <PropertyValue Property="Data">
+                            <Collection>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="code"/>
+                                    <PropertyValue Property="Label" String="Código Identificador"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="name"/>
+                                    <PropertyValue Property="Label" String="Nombre del Equipo"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="model"/>
+                                    <PropertyValue Property="Label" String="Modelo Fabricante"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="serialNumber"/>
+                                    <PropertyValue Property="Label" String="Número de Serie"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="category_code"/>
+                                    <PropertyValue Property="Label" String="Categoría"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="manufactureYear"/>
+                                    <PropertyValue Property="Label" String="Año de Fabricación"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="imageUrl"/>
+                                    <PropertyValue Property="Label" String="URL Imagen"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.FieldGroup" Qualifier="OperationData">
+                    <Record Type="UI.FieldGroupType">
+                        <PropertyValue Property="Data">
+                            <Collection>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="status_code"/>
+                                    <PropertyValue Property="Label" String="Estado Operativo"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="location"/>
+                                    <PropertyValue Property="Label" String="Faena Minera / Ubicación"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="operatingHours"/>
+                                    <PropertyValue Property="Label" String="Horas de Operación"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="healthScore"/>
+                                    <PropertyValue Property="Label" String="Índice de Salud (%)"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="dailyRate"/>
+                                    <PropertyValue Property="Label" String="Tarifa Diaria"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="currency_code"/>
+                                    <PropertyValue Property="Label" String="Moneda"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="lastServiceDate"/>
+                                    <PropertyValue Property="Label" String="Último Servicio Realizado"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="nextServiceDate"/>
+                                    <PropertyValue Property="Label" String="Próximo Servicio Programado"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.FieldGroup" Qualifier="AuditData">
+                    <Record Type="UI.FieldGroupType">
+                        <PropertyValue Property="Data">
+                            <Collection>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="createdAt"/>
+                                    <PropertyValue Property="Label" String="Fecha Creación"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="createdBy"/>
+                                    <PropertyValue Property="Label" String="Creado Por"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="modifiedAt"/>
+                                    <PropertyValue Property="Label" String="Última Modificación"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="modifiedBy"/>
+                                    <PropertyValue Property="Label" String="Modificado Por"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Common.SideEffects" Qualifier="alwaysFetchMessages">
+                    <Record Type="Common.SideEffectsType">
+                        <PropertyValue Property="SourceEntities">
+                            <Collection>
+                                <NavigationPropertyPath></NavigationPropertyPath>
+                            </Collection>
+                        </PropertyValue>
+                        <PropertyValue Property="TargetProperties">
+                            <Collection>
+                                <String>DraftMessages</String>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Common.Messages" Path="DraftMessages"/>
+            </Annotations>
+            <Annotations Target="FleetService.EntityContainer/Equipments">
+                <Annotation Term="Common.DraftRoot">
+                    <Record Type="Common.DraftRootType">
+                        <PropertyValue Property="ActivationAction" String="FleetService.draftActivate"/>
+                        <PropertyValue Property="EditAction" String="FleetService.draftEdit"/>
+                        <PropertyValue Property="PreparationAction" String="FleetService.draftPrepare"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Common.SideEffects" Qualifier="alwaysFetchMessages">
+                    <Record Type="Common.SideEffectsType">
+                        <PropertyValue Property="SourceEntities">
+                            <Collection>
+                                <NavigationPropertyPath></NavigationPropertyPath>
+                            </Collection>
+                        </PropertyValue>
+                        <PropertyValue Property="TargetProperties">
+                            <Collection>
+                                <String>DraftMessages</String>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FleetService.Equipments/ID">
+                <Annotation Term="Core.ComputedDefaultValue" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FleetService.Equipments/createdAt">
+                <Annotation Term="UI.HiddenFilter" Bool="true"/>
+                <Annotation Term="UI.ExcludeFromNavigationContext" Bool="true"/>
+                <Annotation Term="Core.Immutable" Bool="true"/>
+                <Annotation Term="Core.Computed" Bool="true"/>
+                <Annotation Term="Common.Label" String="Created On"/>
+            </Annotations>
+            <Annotations Target="FleetService.Equipments/createdBy">
+                <Annotation Term="UI.HiddenFilter" Bool="true"/>
+                <Annotation Term="UI.ExcludeFromNavigationContext" Bool="true"/>
+                <Annotation Term="Core.Immutable" Bool="true"/>
+                <Annotation Term="Core.Computed" Bool="true"/>
+                <Annotation Term="Core.Description" String="User's unique ID"/>
+                <Annotation Term="Common.Label" String="Created By"/>
+            </Annotations>
+            <Annotations Target="FleetService.Equipments/modifiedAt">
+                <Annotation Term="UI.HiddenFilter" Bool="true"/>
+                <Annotation Term="UI.ExcludeFromNavigationContext" Bool="true"/>
+                <Annotation Term="Core.Computed" Bool="true"/>
+                <Annotation Term="Common.Label" String="Changed On"/>
+            </Annotations>
+            <Annotations Target="FleetService.Equipments/modifiedBy">
+                <Annotation Term="UI.HiddenFilter" Bool="true"/>
+                <Annotation Term="UI.ExcludeFromNavigationContext" Bool="true"/>
+                <Annotation Term="Core.Computed" Bool="true"/>
+                <Annotation Term="Core.Description" String="User's unique ID"/>
+                <Annotation Term="Common.Label" String="Changed By"/>
+            </Annotations>
+            <Annotations Target="FleetService.Equipments/code">
+                <Annotation Term="Common.Label" String="Código Equipo"/>
+            </Annotations>
+            <Annotations Target="FleetService.Equipments/name">
+                <Annotation Term="Common.Label" String="Nombre del Equipo"/>
+            </Annotations>
+            <Annotations Target="FleetService.Equipments/model">
+                <Annotation Term="Common.Label" String="Modelo"/>
+            </Annotations>
+            <Annotations Target="FleetService.Equipments/serialNumber">
+                <Annotation Term="Common.Label" String="Número de Serie"/>
+            </Annotations>
+            <Annotations Target="FleetService.Equipments/category">
+                <Annotation Term="Common.Label" String="Categoría"/>
+            </Annotations>
+            <Annotations Target="FleetService.Equipments/category_code">
+                <Annotation Term="Common.Text" Path="category/name">
+                    <Annotation Term="UI.TextArrangement" EnumMember="UI.TextArrangementType/TextOnly"/>
+                </Annotation>
+                <Annotation Term="Common.ValueList">
+                    <Record Type="Common.ValueListType">
+                        <PropertyValue Property="Label" String="Categorías de Equipo"/>
+                        <PropertyValue Property="CollectionPath" String="Categories"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="category_code"/>
+                                    <PropertyValue Property="ValueListProperty" String="code"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="name"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="description"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Common.Label" String="Categoría"/>
+            </Annotations>
+            <Annotations Target="FleetService.Equipments/status">
+                <Annotation Term="Common.Label" String="Estado Operativo"/>
+            </Annotations>
+            <Annotations Target="FleetService.Equipments/status_code">
+                <Annotation Term="Common.Text" Path="status/name">
+                    <Annotation Term="UI.TextArrangement" EnumMember="UI.TextArrangementType/TextOnly"/>
+                </Annotation>
+                <Annotation Term="Common.ValueList">
+                    <Record Type="Common.ValueListType">
+                        <PropertyValue Property="Label" String="Estados Operativos"/>
+                        <PropertyValue Property="CollectionPath" String="Statuses"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="status_code"/>
+                                    <PropertyValue Property="ValueListProperty" String="code"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="name"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Common.Label" String="Estado Operativo"/>
+            </Annotations>
+            <Annotations Target="FleetService.Equipments/healthScore">
+                <Annotation Term="Common.Label" String="Índice de Salud (%)"/>
+            </Annotations>
+            <Annotations Target="FleetService.Equipments/operatingHours">
+                <Annotation Term="Common.Label" String="Horas de Operación"/>
+            </Annotations>
+            <Annotations Target="FleetService.Equipments/location">
+                <Annotation Term="Common.Label" String="Ubicación / Faena"/>
+            </Annotations>
+            <Annotations Target="FleetService.Equipments/supervisorName">
+                <Annotation Term="Common.Label" String="Supervisor a Cargo"/>
+            </Annotations>
+            <Annotations Target="FleetService.Equipments/supervisorEmail">
+                <Annotation Term="Common.Label" String="Correo Supervisor"/>
+            </Annotations>
+            <Annotations Target="FleetService.Equipments/supervisorPhone">
+                <Annotation Term="Common.Label" String="Teléfono Supervisor"/>
+            </Annotations>
+            <Annotations Target="FleetService.Equipments/dailyRate">
+                <Annotation Term="Measures.ISOCurrency" Path="currency_code"/>
+                <Annotation Term="Common.Label" String="Tarifa Diaria"/>
+            </Annotations>
+            <Annotations Target="FleetService.Equipments/currency">
+                <Annotation Term="Common.Label" String="Moneda"/>
+                <Annotation Term="Core.Description" String="Currency code as specified by ISO 4217"/>
+            </Annotations>
+            <Annotations Target="FleetService.Equipments/currency_code">
+                <Annotation Term="Common.IsCurrency" Bool="true"/>
+                <Annotation Term="Common.Label" String="Moneda"/>
+                <Annotation Term="Common.ValueList">
+                    <Record Type="Common.ValueListType">
+                        <PropertyValue Property="Label" String="Moneda"/>
+                        <PropertyValue Property="CollectionPath" String="Currencies"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="currency_code"/>
+                                    <PropertyValue Property="ValueListProperty" String="code"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="name"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Core.Description" String="Currency code as specified by ISO 4217"/>
+            </Annotations>
+            <Annotations Target="FleetService.Equipments/manufactureYear">
+                <Annotation Term="Common.Label" String="Año de Fabricación"/>
+            </Annotations>
+            <Annotations Target="FleetService.Equipments/lastServiceDate">
+                <Annotation Term="Common.Label" String="Último Mantenimiento"/>
+            </Annotations>
+            <Annotations Target="FleetService.Equipments/nextServiceDate">
+                <Annotation Term="Common.Label" String="Próximo Mantenimiento"/>
+            </Annotations>
+            <Annotations Target="FleetService.Equipments/imageUrl">
+                <Annotation Term="Common.Label" String="Imagen Referencial"/>
+            </Annotations>
+            <Annotations Target="FleetService.Equipments/IsActiveEntity">
+                <Annotation Term="UI.Hidden" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FleetService.Equipments/HasActiveEntity">
+                <Annotation Term="UI.Hidden" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FleetService.Equipments/HasDraftEntity">
+                <Annotation Term="UI.Hidden" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FleetService.Equipments/DraftAdministrativeData">
+                <Annotation Term="UI.Hidden" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FleetService.Equipments/DraftMessages">
+                <Annotation Term="Core.Computed" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FleetService.MaintenanceLogs">
+                <Annotation Term="UI.HeaderInfo">
+                    <Record Type="UI.HeaderInfoType">
+                        <PropertyValue Property="TypeName" String="Orden de Mantenimiento"/>
+                        <PropertyValue Property="TypeNamePlural" String="Órdenes de Mantenimiento"/>
+                        <PropertyValue Property="Title">
+                            <Record Type="UI.DataField">
+                                <PropertyValue Property="Value" Path="logNumber"/>
+                            </Record>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.LineItem">
+                    <Collection>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="logNumber"/>
+                            <PropertyValue Property="Label" String="N° Orden"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="serviceDate"/>
+                            <PropertyValue Property="Label" String="Fecha Servicio"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="maintenanceType"/>
+                            <PropertyValue Property="Label" String="Tipo Mantenimiento"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="technician"/>
+                            <PropertyValue Property="Label" String="Técnico Responsable"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="hoursSpent"/>
+                            <PropertyValue Property="Label" String="Horas Invertidas"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="cost"/>
+                            <PropertyValue Property="Label" String="Costo"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="status"/>
+                            <PropertyValue Property="Label" String="Estado"/>
+                            <PropertyValue Property="Criticality" Path="criticality"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="remarks"/>
+                            <PropertyValue Property="Label" String="Observaciones Técnicas"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.Facets">
+                    <Collection>
+                        <Record Type="UI.ReferenceFacet">
+                            <PropertyValue Property="Label" String="Detalle de la Orden"/>
+                            <PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#LogDetail"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.FieldGroup" Qualifier="LogDetail">
+                    <Record Type="UI.FieldGroupType">
+                        <PropertyValue Property="Data">
+                            <Collection>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="logNumber"/>
+                                    <PropertyValue Property="Label" String="N° Orden"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="serviceDate"/>
+                                    <PropertyValue Property="Label" String="Fecha de Ejecución"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="maintenanceType"/>
+                                    <PropertyValue Property="Label" String="Tipo de Mantenimiento"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="technician"/>
+                                    <PropertyValue Property="Label" String="Técnico Especialista"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="hoursSpent"/>
+                                    <PropertyValue Property="Label" String="Horas Trabajadas"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="cost"/>
+                                    <PropertyValue Property="Label" String="Costo del Servicio"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="currency_code"/>
+                                    <PropertyValue Property="Label" String="Moneda"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="status"/>
+                                    <PropertyValue Property="Label" String="Estado de la Orden"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="remarks"/>
+                                    <PropertyValue Property="Label" String="Detalles y Observaciones"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Common.SideEffects" Qualifier="alwaysFetchMessages">
+                    <Record Type="Common.SideEffectsType">
+                        <PropertyValue Property="SourceEntities">
+                            <Collection>
+                                <NavigationPropertyPath></NavigationPropertyPath>
+                            </Collection>
+                        </PropertyValue>
+                        <PropertyValue Property="TargetProperties">
+                            <Collection>
+                                <String>DraftMessages</String>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Common.Messages" Path="DraftMessages"/>
+            </Annotations>
+            <Annotations Target="FleetService.EntityContainer/MaintenanceLogs">
+                <Annotation Term="Common.DraftNode">
+                    <Record Type="Common.DraftNodeType">
+                        <PropertyValue Property="PreparationAction" String="FleetService.draftPrepare"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Common.SideEffects" Qualifier="alwaysFetchMessages">
+                    <Record Type="Common.SideEffectsType">
+                        <PropertyValue Property="SourceEntities">
+                            <Collection>
+                                <NavigationPropertyPath></NavigationPropertyPath>
+                            </Collection>
+                        </PropertyValue>
+                        <PropertyValue Property="TargetProperties">
+                            <Collection>
+                                <String>DraftMessages</String>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FleetService.MaintenanceLogs/ID">
+                <Annotation Term="Core.ComputedDefaultValue" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FleetService.MaintenanceLogs/createdAt">
+                <Annotation Term="UI.HiddenFilter" Bool="true"/>
+                <Annotation Term="UI.ExcludeFromNavigationContext" Bool="true"/>
+                <Annotation Term="Core.Immutable" Bool="true"/>
+                <Annotation Term="Core.Computed" Bool="true"/>
+                <Annotation Term="Common.Label" String="Created On"/>
+            </Annotations>
+            <Annotations Target="FleetService.MaintenanceLogs/createdBy">
+                <Annotation Term="UI.HiddenFilter" Bool="true"/>
+                <Annotation Term="UI.ExcludeFromNavigationContext" Bool="true"/>
+                <Annotation Term="Core.Immutable" Bool="true"/>
+                <Annotation Term="Core.Computed" Bool="true"/>
+                <Annotation Term="Core.Description" String="User's unique ID"/>
+                <Annotation Term="Common.Label" String="Created By"/>
+            </Annotations>
+            <Annotations Target="FleetService.MaintenanceLogs/modifiedAt">
+                <Annotation Term="UI.HiddenFilter" Bool="true"/>
+                <Annotation Term="UI.ExcludeFromNavigationContext" Bool="true"/>
+                <Annotation Term="Core.Computed" Bool="true"/>
+                <Annotation Term="Common.Label" String="Changed On"/>
+            </Annotations>
+            <Annotations Target="FleetService.MaintenanceLogs/modifiedBy">
+                <Annotation Term="UI.HiddenFilter" Bool="true"/>
+                <Annotation Term="UI.ExcludeFromNavigationContext" Bool="true"/>
+                <Annotation Term="Core.Computed" Bool="true"/>
+                <Annotation Term="Core.Description" String="User's unique ID"/>
+                <Annotation Term="Common.Label" String="Changed By"/>
+            </Annotations>
+            <Annotations Target="FleetService.MaintenanceLogs/logNumber">
+                <Annotation Term="Common.Label" String="N° Orden de Trabajo"/>
+            </Annotations>
+            <Annotations Target="FleetService.MaintenanceLogs/serviceDate">
+                <Annotation Term="Common.Label" String="Fecha de Servicio"/>
+            </Annotations>
+            <Annotations Target="FleetService.MaintenanceLogs/maintenanceType">
+                <Annotation Term="Common.Label" String="Tipo de Mantenimiento"/>
+            </Annotations>
+            <Annotations Target="FleetService.MaintenanceLogs/technician">
+                <Annotation Term="Common.Label" String="Técnico Responsable"/>
+            </Annotations>
+            <Annotations Target="FleetService.MaintenanceLogs/hoursSpent">
+                <Annotation Term="Common.Label" String="Horas Invertidas"/>
+            </Annotations>
+            <Annotations Target="FleetService.MaintenanceLogs/cost">
+                <Annotation Term="Measures.ISOCurrency" Path="currency_code"/>
+                <Annotation Term="Common.Label" String="Costo"/>
+            </Annotations>
+            <Annotations Target="FleetService.MaintenanceLogs/currency">
+                <Annotation Term="Common.Label" String="Moneda"/>
+                <Annotation Term="Core.Description" String="Currency code as specified by ISO 4217"/>
+            </Annotations>
+            <Annotations Target="FleetService.MaintenanceLogs/currency_code">
+                <Annotation Term="Common.IsCurrency" Bool="true"/>
+                <Annotation Term="Common.Label" String="Moneda"/>
+                <Annotation Term="Common.ValueList">
+                    <Record Type="Common.ValueListType">
+                        <PropertyValue Property="Label" String="Moneda"/>
+                        <PropertyValue Property="CollectionPath" String="Currencies"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="currency_code"/>
+                                    <PropertyValue Property="ValueListProperty" String="code"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="name"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Core.Description" String="Currency code as specified by ISO 4217"/>
+            </Annotations>
+            <Annotations Target="FleetService.MaintenanceLogs/status">
+                <Annotation Term="Common.Label" String="Estado de la Orden"/>
+            </Annotations>
+            <Annotations Target="FleetService.MaintenanceLogs/criticality">
+                <Annotation Term="Common.Label" String="Criticidad"/>
+            </Annotations>
+            <Annotations Target="FleetService.MaintenanceLogs/remarks">
+                <Annotation Term="Common.Label" String="Observaciones Técnicas"/>
+            </Annotations>
+            <Annotations Target="FleetService.MaintenanceLogs/IsActiveEntity">
+                <Annotation Term="UI.Hidden" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FleetService.MaintenanceLogs/HasActiveEntity">
+                <Annotation Term="UI.Hidden" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FleetService.MaintenanceLogs/HasDraftEntity">
+                <Annotation Term="UI.Hidden" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FleetService.MaintenanceLogs/DraftAdministrativeData">
+                <Annotation Term="UI.Hidden" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FleetService.MaintenanceLogs/DraftMessages">
+                <Annotation Term="Core.Computed" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FleetService.EntityContainer/Categories">
+                <Annotation Term="Capabilities.DeleteRestrictions">
+                    <Record Type="Capabilities.DeleteRestrictionsType">
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record Type="Capabilities.InsertRestrictionsType">
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.UpdateRestrictions">
+                    <Record Type="Capabilities.UpdateRestrictionsType">
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FleetService.Categories/code">
+                <Annotation Term="Common.Label" String="Código Categoría"/>
+            </Annotations>
+            <Annotations Target="FleetService.Categories/name">
+                <Annotation Term="Common.Label" String="Nombre"/>
+            </Annotations>
+            <Annotations Target="FleetService.Categories/description">
+                <Annotation Term="Common.Label" String="Descripción"/>
+            </Annotations>
+            <Annotations Target="FleetService.EntityContainer/Statuses">
+                <Annotation Term="Capabilities.DeleteRestrictions">
+                    <Record Type="Capabilities.DeleteRestrictionsType">
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record Type="Capabilities.InsertRestrictionsType">
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.UpdateRestrictions">
+                    <Record Type="Capabilities.UpdateRestrictionsType">
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FleetService.Statuses/code">
+                <Annotation Term="Common.Label" String="Código Estado"/>
+            </Annotations>
+            <Annotations Target="FleetService.Statuses/name">
+                <Annotation Term="Common.Label" String="Descripción"/>
+            </Annotations>
+            <Annotations Target="FleetService.Statuses/criticality">
+                <Annotation Term="Common.Label" String="Criticidad Semántica"/>
+            </Annotations>
+            <Annotations Target="FleetService.Currencies">
+                <Annotation Term="UI.Identification">
+                    <Collection>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="name"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FleetService.Currencies/name">
+                <Annotation Term="Common.Label" String="Name"/>
+            </Annotations>
+            <Annotations Target="FleetService.Currencies/descr">
+                <Annotation Term="Common.Label" String="Description"/>
+            </Annotations>
+            <Annotations Target="FleetService.Currencies/code">
+                <Annotation Term="Common.Text" Path="name"/>
+                <Annotation Term="Common.Label" String="Currency Code"/>
+            </Annotations>
+            <Annotations Target="FleetService.Currencies/symbol">
+                <Annotation Term="Common.Label" String="Currency Symbol"/>
+            </Annotations>
+            <Annotations Target="FleetService.Currencies/minorUnit">
+                <Annotation Term="Common.Label" String="Currency Minor Unit Fractions"/>
+            </Annotations>
+            <Annotations Target="FleetService.DraftAdministrativeData">
+                <Annotation Term="Common.Label" String="Draft Administrative Data"/>
+            </Annotations>
+            <Annotations Target="FleetService.DraftAdministrativeData/DraftUUID">
+                <Annotation Term="UI.Hidden" Bool="true"/>
+                <Annotation Term="Common.Label" String="Draft (Technical ID)"/>
+                <Annotation Term="Core.ComputedDefaultValue" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FleetService.DraftAdministrativeData/CreationDateTime">
+                <Annotation Term="Common.Label" String="Draft Created On"/>
+            </Annotations>
+            <Annotations Target="FleetService.DraftAdministrativeData/CreatedByUser">
+                <Annotation Term="Common.Label" String="Draft Created By"/>
+            </Annotations>
+            <Annotations Target="FleetService.DraftAdministrativeData/DraftIsCreatedByMe">
+                <Annotation Term="UI.Hidden" Bool="true"/>
+                <Annotation Term="Common.Label" String="Draft Created By Me"/>
+            </Annotations>
+            <Annotations Target="FleetService.DraftAdministrativeData/LastChangeDateTime">
+                <Annotation Term="Common.Label" String="Draft Last Changed On"/>
+            </Annotations>
+            <Annotations Target="FleetService.DraftAdministrativeData/LastChangedByUser">
+                <Annotation Term="Common.Label" String="Draft Last Changed By"/>
+            </Annotations>
+            <Annotations Target="FleetService.DraftAdministrativeData/InProcessByUser">
+                <Annotation Term="Common.Label" String="Draft In Process By"/>
+            </Annotations>
+            <Annotations Target="FleetService.DraftAdministrativeData/DraftIsProcessedByMe">
+                <Annotation Term="UI.Hidden" Bool="true"/>
+                <Annotation Term="Common.Label" String="Draft In Process By Me"/>
+            </Annotations>
+            <Annotations Target="FleetService.Currencies_texts/locale">
+                <Annotation Term="Common.Label" String="Language Code"/>
+            </Annotations>
+            <Annotations Target="FleetService.Currencies_texts/name">
+                <Annotation Term="Common.Label" String="Name"/>
+            </Annotations>
+            <Annotations Target="FleetService.Currencies_texts/descr">
+                <Annotation Term="Common.Label" String="Description"/>
+            </Annotations>
+            <Annotations Target="FleetService.Currencies_texts/code">
+                <Annotation Term="Common.Text" Path="name"/>
+                <Annotation Term="Common.Label" String="Currency Code"/>
+            </Annotations>
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>

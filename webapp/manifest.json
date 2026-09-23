@@ -1,0 +1,196 @@
+{
+  "_version": "1.89.0",
+  "sap.app": {
+    "id": "komatsufleet",
+    "type": "application",
+    "i18n": "i18n/i18n.properties",
+    "applicationVersion": {
+      "version": "0.0.1"
+    },
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}",
+    "resources": "resources.json",
+    "sourceTemplate": {
+      "id": "@sap/generator-fiori:lrop",
+      "version": "1.32.0",
+      "toolsId": "3b6ffec5-3209-4e59-9e75-2e8d563c5141"
+    },
+    "dataSources": {
+      "annotation": {
+        "type": "ODataAnnotation",
+        "uri": "annotations/annotation.xml",
+        "settings": {
+          "localUri": "annotations/annotation.xml"
+        }
+      },
+      "mainService": {
+        "uri": "/fleet/",
+        "type": "OData",
+        "settings": {
+          "annotations": [
+            "annotation"
+          ],
+          "localUri": "localService/mainService/metadata.xml",
+          "odataVersion": "4.0"
+        }
+      }
+    },
+    "crossNavigation": {
+      "inbounds": {
+        "komatsufleet-display": {
+          "semanticObject": "komatsufleet",
+          "action": "display",
+          "title": "{{komatsufleet-display.flpTitle}}",
+          "signature": {
+            "parameters": {},
+            "additionalParameters": "allowed"
+          }
+        }
+      }
+    }
+  },
+  "sap.ui": {
+    "technology": "UI5",
+    "icons": {
+      "icon": "",
+      "favIcon": "",
+      "phone": "",
+      "phone@2": "",
+      "tablet": "",
+      "tablet@2": ""
+    },
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    }
+  },
+  "sap.ui5": {
+    "flexEnabled": true,
+    "dependencies": {
+      "minUI5Version": "1.152.0",
+      "libs": {
+        "sap.m": {},
+        "sap.ui.core": {},
+        "sap.fe.templates": {}
+      }
+    },
+    "contentDensities": {
+      "compact": true,
+      "cozy": true
+    },
+    "models": {
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": {
+          "bundleName": "komatsufleet.i18n.i18n"
+        }
+      },
+      "": {
+        "dataSource": "mainService",
+        "preload": true,
+        "settings": {
+          "operationMode": "Server",
+          "autoExpandSelect": true,
+          "earlyRequests": true
+        }
+      },
+      "@i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "uri": "i18n/i18n.properties"
+      }
+    },
+    "resources": {
+      "css": []
+    },
+    "routing": {
+      "config": {},
+      "routes": [
+        {
+          "pattern": ":?query:",
+          "name": "EquipmentsList",
+          "target": "EquipmentsList"
+        },
+        {
+          "pattern": "Equipments({key}):?query:",
+          "name": "EquipmentsObjectPage",
+          "target": "EquipmentsObjectPage"
+        },
+        {
+          "pattern": "Equipments({key})/maintenanceLogs({key2}):?query:",
+          "name": "MaintenanceLogsObjectPage",
+          "target": "MaintenanceLogsObjectPage"
+        }
+      ],
+      "targets": {
+        "EquipmentsList": {
+          "type": "Component",
+          "id": "EquipmentsList",
+          "name": "sap.fe.templates.ListReport",
+          "options": {
+            "settings": {
+              "contextPath": "/Equipments",
+              "variantManagement": "Page",
+              "navigation": {
+                "Equipments": {
+                  "detail": {
+                    "route": "EquipmentsObjectPage"
+                  }
+                }
+              },
+              "controlConfiguration": {
+                "@com.sap.vocabularies.UI.v1.LineItem": {
+                  "tableSettings": {
+                    "type": "ResponsiveTable"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "EquipmentsObjectPage": {
+          "type": "Component",
+          "id": "EquipmentsObjectPage",
+          "name": "sap.fe.templates.ObjectPage",
+          "options": {
+            "settings": {
+              "editableHeaderContent": false,
+              "contextPath": "/Equipments",
+              "navigation": {
+                "maintenanceLogs": {
+                  "detail": {
+                    "route": "MaintenanceLogsObjectPage"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "MaintenanceLogsObjectPage": {
+          "type": "Component",
+          "id": "MaintenanceLogsObjectPage",
+          "name": "sap.fe.templates.ObjectPage",
+          "options": {
+            "settings": {
+              "editableHeaderContent": false,
+              "contextPath": "/Equipments/maintenanceLogs"
+            }
+          }
+        }
+      }
+    }
+  },
+  "sap.fiori": {
+    "registrationIds": [],
+    "archeType": "transactional"
+  },
+  "sap.fe": {
+    "app": {
+      "enableLazyLoading": true
+    }
+  },
+  "sap.cloud": {
+    "public": true,
+    "service": "komatsufleet"
+  }
+}
